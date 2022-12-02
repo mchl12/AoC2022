@@ -25,7 +25,9 @@ fun calculateScore(matches: List<Pair<Char, Char>>) =
     matches.sumOf { scoreOfMatch(it.first, it.second) + scoreOfMove(it.second) }
 
 fun main() {
-    val matches: List<Pair<Char, Char>> = File("""D:\IdeaProjects\AoC2022\src\main\resources\day2.in""")
+    println(System.getProperty("user.dir"))
+
+    val matches: List<Pair<Char, Char>> = File("./build/resources/main/day2.in")
         .readLines()
         .map { Pair(it[0], it[2]) }
 

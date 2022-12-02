@@ -1,7 +1,7 @@
 import java.io.File
 
 fun main() {
-    val inputLines: List<String> = File("""D:\IdeaProjects\AoC2022\src\main\resources\day1.in""").readLines()
+    val inputLines: List<String> = File("./build/resources/main/day1.in").readLines()
 
     val totalCalories: MutableList<Int> = mutableListOf()
     totalCalories.add(0)
