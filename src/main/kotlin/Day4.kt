@@ -16,21 +16,15 @@ fun main() {
     val parsed: List<Pair<Assignment, Assignment>> = lines
         .map { pattern.matchEntire(it) }
         .map {
-            val (_, v1, v2, v3, v4) = it!!.destructured
+            val (v1, v2, v3, v4) = it!!.destructured
             Pair(Assignment(v1.toInt(), v2.toInt()), Assignment(v3.toInt(), v4.toInt()))
         }
 
-    val part1: Int = parsed
-        .map { hasContainment(it.first, it.second) }
-        .map { if (it) 1 else 0 }
-        .sum()
+    val part1: Int = parsed.count { hasContainment(it.first, it.second) }
 
     println(part1)
 
-    val part2: Int = parsed
-        .map { overlaps(it.first, it.second) }
-        .map { if (it) 1 else 0 }
-        .sum()
+    val part2: Int = parsed.count { overlaps(it.first, it.second) }
 
     println(part2)
 }
