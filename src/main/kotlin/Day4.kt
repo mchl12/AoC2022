@@ -15,8 +15,10 @@ fun main() {
 
     val parsed: List<Pair<Assignment, Assignment>> = lines
         .map { pattern.matchEntire(it) }
-        .map { it!!.groupValues }
-        .map { Pair(Assignment(it[1].toInt(), it[2].toInt()), Assignment(it[3].toInt(), it[4].toInt())) }
+        .map {
+            val (_, v1, v2, v3, v4) = it!!.destructured
+            Pair(Assignment(v1.toInt(), v2.toInt()), Assignment(v3.toInt(), v4.toInt()))
+        }
 
     val part1: Int = parsed
         .map { hasContainment(it.first, it.second) }
