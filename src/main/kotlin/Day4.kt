@@ -6,6 +6,8 @@ data class Assignment(val low: Int, val high: Int) {
 
 fun hasContainment(ass1: Assignment, ass2: Assignment) = ass1 in ass2 || ass2 in ass1
 
+fun overlaps(ass1: Assignment, ass2: Assignment) = ass1.low <= ass2.high && ass2.low <= ass1.high
+
 fun main() {
     val pattern = """(\d+)-(\d+),(\d+)-(\d+)""".toRegex()
 
@@ -22,4 +24,11 @@ fun main() {
         .sum()
 
     println(part1)
+
+    val part2: Int = parsed
+        .map { overlaps(it.first, it.second) }
+        .map { if (it) 1 else 0 }
+        .sum()
+
+    println(part2)
 }
