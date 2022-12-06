@@ -4,7 +4,7 @@ import java.util.*
 data class Instruction(val count: Int, val origin: Int, val target: Int)
 
 fun main() {
-    val regexCrate = """(?:   |\[([A-Z])\]) ?""".toRegex()
+    val regexCrate = """(?: {3}|\[([A-Z])]) ?""".toRegex()
     val regexNumbers = """ \d[\d ]+""".toRegex()
     val regexInstruction = """move (\d+) from (\d) to (\d)""".toRegex()
 
