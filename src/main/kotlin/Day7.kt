@@ -1,9 +1,7 @@
 import java.io.File
-import kotlin.math.min
 
 abstract class Item(val name: String) {
     abstract fun getSize(): Int
-    abstract fun part1(): Int
 }
 
 class Directory(name: String, val parent: Directory?) : Item(name) {
@@ -11,30 +9,23 @@ class Directory(name: String, val parent: Directory?) : Item(name) {
 
     override fun getSize() = children.values.sumOf { it.getSize() }
 
-    override fun part1(): Int {
-        var sum = children.values
+    fun getDirectorySizes(): List<Int> {
+        val subDirectorySizes: List<List<Int>> = children.values
             .filterIsInstance<Directory>()
-            .map(Directory::getSize)
-            .filter { it <= 100000 }
-            .sum()
-        sum += children.values.sumOf { it.part1() }
-        return sum
-    }
+            .map(Directory::getDirectorySizes)
 
-    fun part2(requiredSize: Int): Int {
-        val propagatedResultMinimum = children.values
-            .filterIsInstance<Directory>()
-            .minOfOrNull { it.part2(requiredSize) }
-            ?: Int.MAX_VALUE
+        val ownSizeFiles: Int = children.values
+            .filterIsInstance<AOCFile>()
+            .sumOf(AOCFile::getSize)
+        val ownSize = subDirectorySizes.sumOf(List<Int>::last) + ownSizeFiles
 
-        val directResultMinimum = children.values
-            .filterIsInstance<Directory>()
-            .map(Directory::getSize)
-            .filter { it >= requiredSize }
-            .minOrNull()
-            ?: Int.MAX_VALUE
+        val combinedList = subDirectorySizes.reduceOrNull { acc, list -> acc + list }
 
-        return min(propagatedResultMinimum, directResultMinimum)
+        if (combinedList == null) {
+            return listOf(ownSize)
+        }
+
+        return combinedList + ownSize
     }
 
     fun getChild(name: String): Directory {
@@ -50,9 +41,8 @@ class Directory(name: String, val parent: Directory?) : Item(name) {
     }
 }
 
-class File(name: String, private val fileSize: Int) : Item(name) {
+class AOCFile(name: String, private val fileSize: Int) : Item(name) {
     override fun getSize() = fileSize
-    override fun part1() = 0
 }
 
 val regCdX = """\$ cd ([a-z.]+)""".toRegex()
@@ -90,7 +80,7 @@ fun main() {
         if (res != null) {
             val (sizeStr, name) = res.destructured
             val size = sizeStr.toInt()
-            val item = File(name, size)
+            val item = AOCFile(name, size)
             currentDirectory.addItem(item)
             continue
         }
@@ -98,11 +88,22 @@ fun main() {
         throw Exception("Unrecognized expression")
     }
 
-    println(rootDirectory.part1())
+    val directorySizes = rootDirectory.getDirectorySizes()
+
+    val part1 = directorySizes
+        .filter { it <= 100000 }
+        .sum()
+    println(part1)
 
     val totalSize = 70000000
-    val rootSize = rootDirectory.getSize()
-    val freeSpaceNeeded =  totalSize - rootSize
+    val neededSpace = 30000000
 
-    println(rootDirectory.part2(freeSpaceNeeded))
+    val rootDirectorySize = directorySizes.last()
+    val spaceLeft = totalSize - rootDirectorySize
+    val requiredSpace = neededSpace - spaceLeft
+
+    val part2 = directorySizes
+        .filter { it >= requiredSpace }
+        .min()
+    println(part2)
 }
