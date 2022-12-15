@@ -5,24 +5,6 @@ import kotlin.math.min
 fun main() {
     val lines = File("./build/resources/main/day14.in").readLines()
 
-//    val pairs = lines.flatMap { it.split(" -> ") }
-//        .map {
-//            val (x, y) = it.split(',')
-//            Pair(x.toInt(), y.toInt())
-//        }
-//    val xValues = pairs.map { it.first }
-//    val yValues = pairs.map { it.second }
-//
-//    val minX = xValues.min()
-//    val maxX = xValues.max()
-//    val minY = yValues.min()
-//    val maxY = yValues.max()
-//
-//    println(minX)
-//    println(maxX)
-//    println(minY)
-//    println(maxY)
-
     val rockLines: List<List<Pair<Pair<Int, Int>, Pair<Int, Int>>>> = lines
         .map {line ->
             line.split(" -> ")
@@ -33,8 +15,8 @@ fun main() {
                 .zipWithNext()
         }
 
-    val scan: Array<BooleanArray> = Array(600) { BooleanArray(200) { false } }
-    val sand: Array<BooleanArray> = Array(600) { BooleanArray(200) { false } }
+    val scan: Array<BooleanArray> = Array(1000) { BooleanArray(200) { false } }
+    val sand: Array<BooleanArray> = Array(1000) { BooleanArray(200) { false } }
 
     for (line in rockLines) {
         for ((coordinates1, coordinates2) in line) {
@@ -54,22 +36,38 @@ fun main() {
         }
     }
 
-//    for (y in 0..9) {
-//        for (x in 494..503) {
+    var counter = 0
+    while (dropSand(scan, sand)) {
+        counter++
+    }
+
+    println(counter)
+
+    val pairs = lines.flatMap { it.split(" -> ") }
+        .map {
+            val (x, y) = it.split(',')
+            Pair(x.toInt(), y.toInt())
+        }
+    val maxY = pairs.maxOf { it.second }
+    for (x in 0..999) {
+        scan[x][maxY + 2] = true
+    }
+
+    while (dropSand2(scan, sand)) {
+        counter++
+    }
+
+//    for (y in 0..11) {
+//        for (x in 480..515) {
 //            if (scan[x][y])
 //                print('#')
-//            else if (x == 500)
-//                print('|')
+//            else if (sand[x][y])
+//                print('o')
 //            else
 //                print('.')
 //        }
 //        println()
 //    }
-
-    var counter = 0
-    while (dropSand(scan, sand)) {
-        counter++
-    }
 
     println(counter)
 }
@@ -99,4 +97,34 @@ fun dropSand(scan: Array<BooleanArray>, sand: Array<BooleanArray>): Boolean {
     }
 
     return false
+}
+
+fun dropSand2(scan: Array<BooleanArray>, sand: Array<BooleanArray>): Boolean {
+    var sandX = 500
+    var sandY = 0
+
+    if (sand[sandX][sandY])
+        return false
+
+    while (sandY < 199) {
+        sandY++
+        if (!scan[sandX][sandY] && !sand[sandX][sandY]) {
+            continue
+        }
+
+        if (!scan[sandX - 1][sandY] && !sand[sandX - 1][sandY]) {
+            sandX--
+            continue
+        }
+
+        if (!scan[sandX + 1][sandY] && !sand[sandX + 1][sandY]) {
+            sandX++
+            continue
+        }
+
+        sand[sandX][sandY - 1] = true
+        return true
+    }
+
+    throw Exception("sand bypassed wall at the bottom !")
 }
