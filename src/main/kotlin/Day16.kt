@@ -1,5 +1,7 @@
 import java.io.File
 import java.util.*
+import kotlin.system.measureTimeMillis
+import kotlin.math.*
 
 var valveMap: Map<String, Int> = mapOf()
 var graph: List<MutableList<Int>> = listOf()
@@ -61,9 +63,22 @@ fun main() {
 
     memo = List(31) { List(valveMap.size) { IntArray(1 shl valvesWithFlow) { -1 } } }
 
-    val result = part1(30, valveMap["AA"]!!, 0)
-
+    var result = 0
+    val start = valveMap["AA"]!!
+    val ms = measureTimeMillis {
+        result = part1(30, start, 0)
+    }
     println(result)
+    println("$ms ms")
+
+    var part2 = 0
+    for (i in 0 until (1 shl valvesWithFlow)) {
+        val score1 = part1(26, start, i)
+        val score2 = part1(26, start, i xor ((1 shl valvesWithFlow) - 1))
+        part2 = max(part2, score1 + score2)
+    }
+
+    println(part2)
 }
 
 fun part1(minutes: Int, position: Int, valveBitmap: Int): Int {
