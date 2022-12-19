@@ -1,10 +1,18 @@
 import java.io.File
 import kotlin.math.*
+import kotlin.system.measureTimeMillis
 
 fun main() {
     val sol = Day19()
-    sol.part1()
-    sol.part2()
+    var time = measureTimeMillis {
+        sol.part1()
+    }
+    println("part 1 took $time ms")
+
+    time = measureTimeMillis {
+        sol.part2()
+    }
+    println("part 2 took $time ms")
 }
 
 data class RobotState(val oreGeneration: Int, val ore: Int, val clayGeneration: Int, val clay: Int
