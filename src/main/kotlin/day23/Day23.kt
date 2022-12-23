@@ -8,7 +8,6 @@ val surroundingDirections = listOf(
     Vec2(1, 0),
     Vec2(1, 1),
     Vec2(0, -1),
-    Vec2(0, 0),
     Vec2(0, 1),
     Vec2(-1, -1),
     Vec2(-1, 0),
@@ -48,6 +47,24 @@ fun main() {
     val maxY = elves.maxOf { it.pos.y }
     val part1 = (maxX - minX + 1) * (maxY - minY + 1) - elves.size
     println(part1)
+}
+
+fun printElves(elves: List<Elf>) {
+    val minX = elves.minOf { it.pos.x }
+    val maxX = elves.maxOf { it.pos.x }
+    val minY = elves.minOf { it.pos.y }
+    val maxY = elves.maxOf { it.pos.y }
+
+    for (y in minY..maxY) {
+        for (x in minX..maxX) {
+            if (elves.find { it.pos == Vec2(x, y) } != null) {
+                print('#')
+            } else
+                print('.')
+        }
+        println()
+    }
+    println()
 }
 
 fun planElves(elves: List<Elf>, elfPositions: Map<Vec2, Elf>) {
