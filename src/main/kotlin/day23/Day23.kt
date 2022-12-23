@@ -29,24 +29,48 @@ fun main() {
     val elves = mutElves.toList()
     val elfPositions = elves.associateBy { it.pos }.toMutableMap()
 
-    repeat(10) {
+    // part 1
+    //repeat(10) {
+    //    planElves(elves, elfPositions)
+    //    elfPositions.clear()
+    //    for (elf in elves) {
+    //        elf.addNewPos(elfPositions)
+    //    }
+    //    for (elf in elves) {
+    //        elf.pos = elf.newPos
+    //        elf.directionStart = (elf.directionStart + 1) % orientationOrder.size
+    //    }
+    //}
+//
+    //val minX = elves.minOf { it.pos.x }
+    //val maxX = elves.maxOf { it.pos.x }
+    //val minY = elves.minOf { it.pos.y }
+    //val maxY = elves.maxOf { it.pos.y }
+    //val part1 = (maxX - minX + 1) * (maxY - minY + 1) - elves.size
+    //println(part1)
+
+    // part 2
+    var i = 0
+    while (true) {
+        i++
         planElves(elves, elfPositions)
         elfPositions.clear()
         for (elf in elves) {
             elf.addNewPos(elfPositions)
         }
+
+        var moved = false
         for (elf in elves) {
+            if (elf.pos != elf.newPos)
+                moved = true
             elf.pos = elf.newPos
             elf.directionStart = (elf.directionStart + 1) % orientationOrder.size
         }
-    }
 
-    val minX = elves.minOf { it.pos.x }
-    val maxX = elves.maxOf { it.pos.x }
-    val minY = elves.minOf { it.pos.y }
-    val maxY = elves.maxOf { it.pos.y }
-    val part1 = (maxX - minX + 1) * (maxY - minY + 1) - elves.size
-    println(part1)
+        if (!moved)
+            break
+    }
+    println(i)
 }
 
 fun printElves(elves: List<Elf>) {
