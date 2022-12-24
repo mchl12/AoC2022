@@ -6,9 +6,6 @@ import java.util.*
 fun main() {
     val lines = File("./build/resources/main/day24.in").readLines()
 
-    val startPosition = Vec2(1, 1)
-    val finishLineY = lines.size
-
     val width = lines.maxOf(String::length)
     val height = lines.size + 2
 
@@ -45,17 +42,41 @@ fun main() {
         hasBlizzard
     }
 
-    val visited: Array<Array<BooleanArray>> = Array(blizzardIterations) { Array(width) { BooleanArray(height) { false } } }
-    visited[0][startPosition.x][startPosition.y] = true
-    val queue: Queue<Pair<Vec2, Int>> = LinkedList()
-    queue.add(Pair(startPosition, 0))
+    val part1 = bfs(board, blizzardPositions, Vec2(1, 1), height - 2, 0)
+    if (part1 == null) {
+        println("Did not find a path for part 1")
+        return
+    }
+    println(part1)
 
-    var result: Int? = null
+    val timeToBack = bfs(board, blizzardPositions, Vec2(width - 2, height - 2), 1, part1)
+    if (timeToBack == null) {
+        println("Cannot find the way back")
+        return
+    }
+
+    val part2 = bfs(board, blizzardPositions, Vec2(1, 1), height - 2, timeToBack)
+    if (part2 == null) {
+        println("Did not find a path for part 2")
+        return
+    }
+    println(part2)
+}
+
+fun bfs(board: Array<BooleanArray>, blizzardPositions: Array<Array<BooleanArray>>, startPosition: Vec2, finishLineY: Int, startTime: Int): Int? {
+    val blizzardIterations = blizzardPositions.size
+    val width = board.size
+    val height = board.maxOf(BooleanArray::size)
+
+    val visited: Array<Array<BooleanArray>> = Array(blizzardIterations) { Array(width) { BooleanArray(height) { false } } }
+    visited[startTime % blizzardIterations][startPosition.x][startPosition.y] = true
+    val queue: Queue<Pair<Vec2, Int>> = LinkedList()
+    queue.add(Pair(startPosition, startTime))
+
     while (!queue.isEmpty()) {
         val (pos, time) = queue.remove()
-        if (pos.y >= finishLineY) {
-            result = time
-            break
+        if (pos.y == finishLineY) {
+            return time
         }
 
         val blizzardIt = (time + 1) % blizzardIterations
@@ -77,11 +98,7 @@ fun main() {
         }
     }
 
-    if (result == null) {
-        println("Did not find a path")
-    } else {
-        println(result)
-    }
+    return null
 }
 
 fun gcd(a: Int, b: Int): Int {
